@@ -19,8 +19,7 @@ public class BaseGosnEntity {
         Gson gson = new Gson();
         switch (type) {
             case SEARCH_LIGHT_AREA:
-//                object = gson.fromJson(json, LightAreaEntity.class);
-                object = gson.fromJson(json, Test.class);
+                object = gson.fromJson(json, LightAreaEntity.class);
                 break;
             case SEARCH_LIGHT_DEVICES_AREA:
                 object = gson.fromJson(json, LightDevicesByAreaEntity.class);
@@ -49,7 +48,7 @@ public class BaseGosnEntity {
             case CONTROL_ROOM_CHANNEL:
             case CONTROL_ROOM_CURTAIN:
             case CONTROL_ROOM_PRESET:
-                object = gson.fromJson(json, BaseGosnEntity.class);
+                object = gson.fromJson(json, ControlEntity.class);
                 break;
         }
         return object;

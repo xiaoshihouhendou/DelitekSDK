@@ -8,11 +8,20 @@ import androidx.annotation.NonNull;
 
 import com.example.dlksdk.App;
 import com.example.dlksdk.Content.Content;
-import com.example.dlksdk.DLKPresenter.TimeCounts;
 import com.example.dlksdk.http.HttpUtils;
 import com.example.dlksdk.http.callback.CommonCallback;
 import com.example.dlksdk.http.entity.AllDevicesEntity;
+import com.example.dlksdk.http.entity.BaseEntity;
+import com.example.dlksdk.http.entity.LightDevicesByAreaEntity;
+import com.example.dlksdk.http.entity.RoomDevicesByAreaEntity;
 import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
+
+import static com.example.dlksdk.BQSDK.isControl;
 
 public abstract class Request {
 
@@ -28,7 +37,7 @@ public abstract class Request {
     private boolean isRoomBack = false;
 
 
-    private String allData = "";
+    public static boolean allData = false;
 
     private AllDevicesEntity entity = new AllDevicesEntity();
 
@@ -36,8 +45,10 @@ public abstract class Request {
 
     private int time = App.pass;
 
-    public static boolean isControl = false;
 
+
+    public Map objectRoom;
+    public Map objectLight;
 
     private Handler handler = new Handler() {
 
@@ -45,6 +56,8 @@ public abstract class Request {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
+            Log.i("----", "handleMessage: isControl=="+isControl);
+            Log.i("----", "handleMessage: isControl=="+allData);
             if (!isControl) {
                 all();
             }
@@ -55,31 +68,35 @@ public abstract class Request {
 
     public void request(int times) {
         this.time = times;
-
+        handler.sendEmptyMessage(0);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                handler.sendEmptyMessage(0);
-                Log.i("---", "run: ---->>>>");
                 handler.postDelayed(this, time);
+                handler.sendEmptyMessage(0);
             }
         }, time);
 
     }
 
 
-
     private void all() {
         isLightBack = false;
         isRoomBack = false;
-        Log.i("----", "all: 请求发出");
-        HttpUtils.doPost(Content.getUrl(Content.TYPE.SEARCH_ALL_AREA_DEVICES), "", new CommonCallback<String>() {
+        if (objectLight == null) {
+            entity.getRoom().setRoom("0");
+            result(entity);
+            return;
+        }
+        HttpUtils.doPost(Content.getUrl(Content.TYPE.SEARCH_ALL_AREA_DEVICES), getBoday(BaseData.getJson(Content.TYPE.SEARCH_LIGHT_DEVICES_AREA)
+                ,objectLight), new CommonCallback<String>() {
             @Override
             protected void success(String result) {
                 Log.i("---->>>>", "success: " + result);
                 isLightBack = true;
-//                entity.setLight(gson.fromJson(result, LightDevicesByAreaEntity.class));
+                entity.setLight(gson.fromJson(result, LightDevicesByAreaEntity.class));
                 if (isRoomBack) {
+                    allData=true;
                     result(entity);
                 }
 
@@ -93,13 +110,15 @@ public abstract class Request {
             }
         });
 
-        HttpUtils.doPost(Content.getUrl(Content.TYPE.SEARCH_ALL_AREA_DEVICES), "", new CommonCallback<String>() {
+        HttpUtils.doPost(Content.getUrl(Content.TYPE.SEARCH_ALL_AREA_DEVICES), getBoday(BaseData.getJson(Content.TYPE.SEARCH_ROOM_AREA_DEVICES)
+                ,objectRoom), new CommonCallback<String>() {
             @Override
             protected void success(String result) {
                 Log.i("---->>>>", "success: " + result);
                 isRoomBack = true;
-//                entity.setRoom(gson.fromJson(result, RoomDevicesByAreaEntity.class));
+                entity.setRoom(gson.fromJson(result, RoomDevicesByAreaEntity.class));
                 if (isLightBack) {
+                    allData=true;
                     result(entity);
                 }
             }
@@ -112,6 +131,7 @@ public abstract class Request {
     }
 
     public void request(String body, Content.TYPE type) {
+        Log.i(">>>>", "request: >>>>" + body);
         HttpUtils.doPost(Content.getUrl(type), body, new CommonCallback<String>() {
             @Override
             protected void success(String result) {
@@ -130,10 +150,11 @@ public abstract class Request {
 
     /**
      * 接口通了  在优化
-     *
      */
-    public void requestAll() {
-       request(App.pass);
+    public void requestAll(Map<String, Object> room, Map<String, Object> light) {
+        this.objectLight=light;
+        this.objectRoom=room;
+        request(App.pass);
     }
 
     protected abstract void result(String result);
@@ -144,7 +165,16 @@ public abstract class Request {
     protected abstract void reason(String reason);
 
 
-
+    public String getBoday(JSONObject o, Map<String, Object> map) {
+        try {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                o.put(entry.getKey(), entry.getValue());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return o.toString();
+    }
 
 
 }

@@ -8,6 +8,9 @@ public class AllDevicesEntity implements Serializable {
     private RoomDevicesByAreaEntity room;
 
     public LightDevicesByAreaEntity getLight() {
+        if (light==null){
+            light=new LightDevicesByAreaEntity();
+        }
         return light;
     }
 
@@ -16,6 +19,10 @@ public class AllDevicesEntity implements Serializable {
     }
 
     public RoomDevicesByAreaEntity getRoom() {
+        if (room==null){
+            room=new RoomDevicesByAreaEntity();
+        }
+
         return room;
     }
 
