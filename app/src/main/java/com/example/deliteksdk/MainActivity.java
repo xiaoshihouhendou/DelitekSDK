@@ -9,9 +9,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alibaba.fastjson.JSON;
 import com.example.dlksdk.BQSDK;
 import com.example.dlksdk.Content.Content;
 import com.example.dlksdk.http.entity.AllDevicesEntity;
+import com.example.dlksdk.http.entity.DevicesEntity;
 import com.example.dlksdk.http.entity.LightAreaEntity;
 import com.example.dlksdk.http.entity.LightChannelEntity;
 import com.example.dlksdk.http.entity.LightDevicesByAreaEntity;
@@ -27,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements BQSDK.DataBackListener, View.OnClickListener, BQSDK.AllDataListener {
@@ -54,8 +57,7 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BQSDK.Init("192.168.175.87");
-//        BQSDK.getInit("192.168.1.101");
+        BQSDK.Init("192.168.1.102");
         tv1 = findViewById(R.id.tv_1);
         tv2 = findViewById(R.id.tv_2);
         tv3 = findViewById(R.id.tv_3);
@@ -115,28 +117,28 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
 
         switch (type) {
             case SEARCH_LIGHT_AREA:
-                tvContent.setText("搜索成功》》》》》数据长度" + ((LightAreaEntity) o).getAreas().size());
+                tvContent.setText("搜索成功》》》》》数据长度" + JSON.toJSONString((LightAreaEntity) o));
                 break;
             case SEARCH_LIGHT_DEVICES_AREA:
-                tvContent.setText("搜索成功》》》》》数据长度" + ((LightDevicesByAreaEntity) o).getDatas().size());
+                tvContent.setText("搜索成功》》》》》数据长度" + JSON.toJSONString((LightDevicesByAreaEntity) o));
                 break;
             case SEARCH_LIGHT_CHANNEL:
-                tvContent.setText("搜索成功》》》》》数据长度" + ((LightChannelEntity) o).getDatas().size());
+                tvContent.setText("搜索成功》》》》》数据长度" + JSON.toJSONString((LightChannelEntity) o));
                 break;
             case SEARCH_LIGHT_PRESET:
-                tvContent.setText("搜索成功》》》》》数据长度" + ((LightPresetEntity) o).getDatas().size());
+                tvContent.setText("搜索成功》》》》》数据长度" + JSON.toJSONString((LightPresetEntity) o));
                 break;
             case SEARCH_ROOM_AIRS:
-                tvContent.setText("搜索成功》》》》》数据长度" + ((RoomAirsEntity) o).getDatas().size());
+                tvContent.setText("搜索成功》》》》》数据长度" + JSON.toJSONString((RoomAirsEntity) o));
                 break;
             case SEARCH_ROOM_AREA:
-                tvContent.setText("搜索成功》》》》》数据长度" + ((RoomAreaEntity) o).getAreas().size());
+                tvContent.setText("搜索成功》》》》》数据长度" + JSON.toJSONString((RoomAreaEntity) o));
                 break;
             case SEARCH_ROOM_AREA_DEVICES:
-                tvContent.setText("搜索成功》》》》》数据长度" + ((RoomDevicesByAreaEntity) o).getDatas().size());
+                tvContent.setText("搜索成功》》》》》数据长度" + JSON.toJSONString((RoomDevicesByAreaEntity) o));
                 break;
             case SEARCH_ROOM_CHANNEL:
-                tvContent.setText("搜索成功》》》》》数据长度" + ((RoomChannelEntity) o).getDatas().size());
+                tvContent.setText("搜索成功》》》》》数据长度" + JSON.toJSONString((RoomChannelEntity) o));
                 break;
             case CONTROL_LIGHT_PRESET:
             case CONTROL_LIGHT_CHANNEL:
@@ -150,10 +152,16 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
 
     }
 
+//    @Override
+//    public void result(List<DevicesEntity> entity) {
+//        tvContent.setText("灯控设备数量:》》" + entity.getLight().getDatas().size() + "\n客控设备数量:>>>>"
+//                + entity.getRoom().getDatas().size() + "时间>>" + System.currentTimeMillis());
+//    }
+
     @Override
-    public void result(AllDevicesEntity entity) {
-        tvContent.setText("灯控设备数量:》》" + entity.getLight().getDatas().size() + "\n客控设备数量:>>>>"
-                + entity.getRoom().getDatas().size() + "时间>>" + System.currentTimeMillis());
+    public void resultDevices(List<DevicesEntity> entity) {
+
+        tvContent.setText(JSON.toJSONString(entity));
     }
 
     @Override
@@ -173,8 +181,8 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
 
             case R.id.tv_1:
                 BQSDK.Init().Control(Content.TYPE.CONTROL_LIGHT_PRESET)
-                        .addParams("areaId", "1")
-                        .addParams("presetId", "101")
+                        .addParams("areaId", 1)
+                        .addParams("presetId", 101)
                         .Build();
                 break;
             case R.id.tv_2:
@@ -182,14 +190,14 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
                     JSONArray array = new JSONArray();
                     JSONObject object = new JSONObject();
                     JSONObject object1 = new JSONObject();
-                    object.put("id", "1");
+                    object.put("id", 1);
                     object.put("value", "100");
-                    object1.put("id", "2");
+                    object1.put("id", 1);
                     object1.put("value", "100");
                     array.put(0, object);
                     array.put(1, object1);
                     BQSDK.Init().Control(Content.TYPE.CONTROL_LIGHT_CHANNEL)
-                            .addParams("areaId", "1")
+                            .addParams("areaId", 1)
                             .addParams("datas", array)
                             .Build();
                 } catch (JSONException e) {
@@ -198,12 +206,10 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
                 break;
             case R.id.tv_3:
 //                "room":"8888","areaId":1,"presetId":1
-                Map<String, Object> map = new HashMap<>();
-                map.put("room", "8888");
-                map.put("areaId", "1");
-                map.put("presetId", "1");
                 BQSDK.Init().Control(Content.TYPE.CONTROL_ROOM_PRESET)
-                        .addParams(map)
+                        .addParams("room","8888")
+                        .addParams("areaId",1)
+                        .addParams("presetId",1)
                         .Build();
                 break;
             case R.id.tv_4:
@@ -212,15 +218,15 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
                 JSONObject object2 = new JSONObject();
                 JSONObject object11 = new JSONObject();
                 try {
-                    object2.put("id", "1");
+                    object2.put("id", 1);
                     object2.put("value", "100");
-                    object11.put("id", "2");
+                    object11.put("id", 1);
                     object11.put("value", "100");
                     array1.put(0, object2);
                     array1.put(1, object11);
                     BQSDK.Init().Control(Content.TYPE.CONTROL_ROOM_CHANNEL)
                             .addParams("room", "8888")
-                            .addParams("areaId", "1")
+                            .addParams("areaId", 1)
                             .addParams("datas", array1)
                             .Build();
                 } catch (JSONException e) {
@@ -234,20 +240,22 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
                 JSONObject object21 = new JSONObject();
                 JSONObject object111 = new JSONObject();
                 try {
-                    object21.put("id", "1");
+                    object21.put("id", 1);
                     object21.put("fan", "high");
                     object21.put("mode", "cold");
                     object21.put("setT", "24");
+                    object21.put("switch", "off");
 
-                    object111.put("id", "1");
+                    object111.put("id", 2);
                     object111.put("fan", "high");
                     object111.put("mode", "cold");
                     object111.put("setT", "24");
+                    object111.put("switch", "off");
                     array2.put(0, object21);
                     array2.put(1, object111);
                     BQSDK.Init().Control(Content.TYPE.CONTROL_ROOM_AIRS)
                             .addParams("room", "8888")
-                            .addParams("areaId", "1")
+                            .addParams("areaId", 1)
                             .addParams("datas", array2)
                             .Build();
                 } catch (JSONException e) {
@@ -262,15 +270,15 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
                 JSONObject object = new JSONObject();
                 JSONObject object1 = new JSONObject();
                 try {
-                    object.put("id", "1");
+                    object.put("id", 1);
                     object.put("value", "100");
-                    object1.put("id", "2");
+                    object1.put("id", 2);
                     object1.put("value", "100");
                     array.put(0, object);
                     array.put(1, object1);
-                    BQSDK.Init().Search(Content.TYPE.CONTROL_ROOM_CURTAIN)
+                    BQSDK.Init().Control(Content.TYPE.CONTROL_ROOM_CURTAIN)
                             .addParams("room", "8888")
-                            .addParams("areaId", "1")
+                            .addParams("areaId", 1)
                             .addParams("datas", array)
                             .Build();
                 } catch (JSONException e) {
@@ -285,8 +293,10 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
                 Map<String, Object> mapRoom = new HashMap<>();
                 Map<String, Object> mapLight = new HashMap<>();
                 mapRoom.put("areaIds", array8);
-                mapLight.put("room", "8888");
+                mapRoom.put("room", "8888");
                 mapLight.put("areaIds", array8);
+
+
 
                 BQSDK.Init().SearchAllDevices(mapRoom, mapLight)
                         .setPassTime(4000)
@@ -305,7 +315,7 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
                 array3.put(101);
                 array3.put(102);
                 BQSDK.Init().Search(Content.TYPE.SEARCH_LIGHT_PRESET)
-                        .addParams("areaId", "1")
+                        .addParams("areaId", 1)
                         .addParams("presetIds", array3)
                         .Build();
                 break;
@@ -315,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
                 array4.put(1);
                 array4.put(2);
                 BQSDK.Init().Search(Content.TYPE.SEARCH_LIGHT_CHANNEL)
-                        .addParams("areaId", "1")
+                        .addParams("areaId", 1)
                         .addParams("channelIds", array4)
                         .Build();
                 break;
@@ -332,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
                 array5.put(2);
                 BQSDK.Init().Search(Content.TYPE.SEARCH_ROOM_CHANNEL)
                         .addParams("room", "8888")
-                        .addParams("areaId", "1")
+                        .addParams("areaId", 1)
                         .addParams("channelIds", array5)
                         .Build();
                 break;
@@ -343,22 +353,28 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
                 array6.put(2);
                 BQSDK.Init().Search(Content.TYPE.SEARCH_ROOM_AIRS)
                         .addParams("room", "8888")
-                        .addParams("areaId", "1")
+                        .addParams("areaId", 1)
                         .addParams("airIds", array6)
                         .Build();
                 break;
             case R.id.tv_14:
-                JSONArray array7 = new JSONArray();
-                array7.put(1);
-                array7.put(2);
-                Map<String, Object> mapRoom2 = new HashMap<>();
-                Map<String, Object> mapLight2 = new HashMap<>();
-                mapRoom2.put("areaIds", array7);
-                mapLight2.put("room", "8888");
-                mapLight2.put("areaIds", array7);
-                BQSDK.Init().SearchAllDevices(mapRoom2, mapLight2)
-                        .setPassTime(4000)
-                        .BuildAll();
+                try {
+                    JSONArray array11 = new JSONArray();
+                    JSONObject object112 = new JSONObject();
+                    JSONObject object1112 = new JSONObject();
+                    object112.put("id", 1);
+                    object112.put("value", "10");
+                    object1112.put("id", 2);
+                    object1112.put("value", "200");
+                    array11.put(0, object112);
+                    array11.put(1, object1112);
+                    BQSDK.Init().Control(Content.TYPE.CONTROL_LIGHT_CHANNEL)
+                            .addParams("areaId", 1)
+                            .addParams("datas", array11)
+                            .Build();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }

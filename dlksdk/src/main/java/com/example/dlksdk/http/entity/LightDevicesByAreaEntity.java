@@ -1,9 +1,10 @@
 package com.example.dlksdk.http.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  根据区域查询设备
+ * 根据区域查询设备
  */
 public class LightDevicesByAreaEntity extends BaseEntity {
 
@@ -17,6 +18,9 @@ public class LightDevicesByAreaEntity extends BaseEntity {
     private List<DatasBean> datas;
 
     public List<DatasBean> getDatas() {
+        if (datas == null) {
+            datas = new ArrayList<>();
+        }
         return datas;
     }
 
@@ -52,6 +56,9 @@ public class LightDevicesByAreaEntity extends BaseEntity {
         }
 
         public List<DevicesBean> getDevices() {
+            if (devices == null) {
+                devices = new ArrayList<>();
+            }
             return devices;
         }
 
@@ -97,6 +104,9 @@ public class LightDevicesByAreaEntity extends BaseEntity {
             }
 
             public StateBean getState() {
+                if (state == null) {
+                    state = new StateBean();
+                }
                 return state;
             }
 
@@ -109,13 +119,13 @@ public class LightDevicesByAreaEntity extends BaseEntity {
                  * value : 0
                  */
 
-                private int value;
+                private String value;
 
-                public int getValue() {
+                public String getValue() {
                     return value;
                 }
 
-                public void setValue(int value) {
+                public void setValue(String value) {
                     this.value = value;
                 }
             }

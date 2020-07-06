@@ -1,9 +1,14 @@
 package com.example.dlksdk.http.entity;
 
+import android.text.TextUtils;
+
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  根据区域查询设备 客控
+ * 根据区域查询设备 客控
  */
 public class RoomDevicesByAreaEntity extends BaseEntity {
 
@@ -27,6 +32,9 @@ public class RoomDevicesByAreaEntity extends BaseEntity {
     }
 
     public List<DatasBean> getDatas() {
+        if (datas == null) {
+            datas = new ArrayList<>();
+        }
         return datas;
     }
 
@@ -54,7 +62,7 @@ public class RoomDevicesByAreaEntity extends BaseEntity {
         }
 
         public String getName() {
-            return name;
+            return str(name);
         }
 
         public void setName(String name) {
@@ -62,6 +70,9 @@ public class RoomDevicesByAreaEntity extends BaseEntity {
         }
 
         public List<DevicesBean> getDevices() {
+            if (devices == null) {
+                devices = new ArrayList<>();
+            }
             return devices;
         }
 
@@ -91,7 +102,7 @@ public class RoomDevicesByAreaEntity extends BaseEntity {
             }
 
             public String getType() {
-                return type;
+                return str(type);
             }
 
             public void setType(String type) {
@@ -99,7 +110,7 @@ public class RoomDevicesByAreaEntity extends BaseEntity {
             }
 
             public String getName() {
-                return name;
+                return str(name);
             }
 
             public void setName(String name) {
@@ -107,6 +118,9 @@ public class RoomDevicesByAreaEntity extends BaseEntity {
             }
 
             public StateBean getState() {
+                if (state == null) {
+                    state = new StateBean();
+                }
                 return state;
             }
 
@@ -115,7 +129,80 @@ public class RoomDevicesByAreaEntity extends BaseEntity {
             }
 
             public static class StateBean {
+
+
+                public String getSwitchs() {
+                    return str(switchs);
+                }
+
+                public void setSwitchs(String switchs) {
+                    this.switchs = switchs;
+                }
+
+                /**
+                 * fan : low
+                 * mode : fan
+                 * setT : 25
+                 * currentT : 25
+                 */
+
+                private String fan;
+                private String mode;
+                private int setT;
+                private int currentT;
+                private String value;
+                @SerializedName("switch")
+                private String switchs;
+
+
+                public String getValue() {
+
+                    return str(value);
+                }
+
+                public void setValue(String value) {
+                    this.value = value;
+                }
+
+                public String getFan() {
+                    return str(fan);
+                }
+
+                public void setFan(String fan) {
+                    this.fan = fan;
+                }
+
+                public String getMode() {
+                    return str(mode);
+                }
+
+                public void setMode(String mode) {
+                    this.mode = mode;
+                }
+
+                public int getSetT() {
+                    return setT;
+                }
+
+                public void setSetT(int setT) {
+                    this.setT = setT;
+                }
+
+                public int getCurrentT() {
+                    return currentT;
+                }
+
+                public void setCurrentT(int currentT) {
+                    this.currentT = currentT;
+                }
             }
         }
+    }
+
+    public static String str(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return "";
+        }
+        return str;
     }
 }

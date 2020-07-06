@@ -1,12 +1,12 @@
 package com.example.dlksdk.http.entity;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  灯控搜索区域
+ * 灯控搜索区域
  */
-public class LightAreaEntity extends BaseEntity  {
+public class LightAreaEntity extends BaseEntity {
 
 
     /**
@@ -18,6 +18,9 @@ public class LightAreaEntity extends BaseEntity  {
     private List<AreasBean> areas;
 
     public List<AreasBean> getAreas() {
+        if (areas==null){
+            areas=new ArrayList<>();
+        }
         return areas;
     }
 
@@ -49,5 +52,12 @@ public class LightAreaEntity extends BaseEntity  {
         public void setName(String name) {
             this.name = name;
         }
+
+        @Override
+        public String toString() {
+            return ">>name==" + name;
+        }
     }
+
+
 }

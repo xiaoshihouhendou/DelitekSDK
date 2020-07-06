@@ -148,7 +148,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:padding="5dp"
-                android:text="控制客控空调" />
+                android:text="查询客控空调" />
 
             <Button
                 android:id="@+id/tv_14"
@@ -156,8 +156,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:padding="5dp"
-                android:visibility="invisible"
-                android:text="查询所有设备" />
+                android:text="测试本地控制变更" />
 
 
         </LinearLayout>

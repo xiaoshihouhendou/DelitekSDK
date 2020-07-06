@@ -9,10 +9,13 @@ import com.example.dlksdk.http.entity.RoomAirsEntity;
 import com.example.dlksdk.http.entity.RoomAreaEntity;
 import com.example.dlksdk.http.entity.RoomChannelEntity;
 import com.example.dlksdk.http.entity.RoomDevicesByAreaEntity;
-import com.example.dlksdk.http.entity.Test;
 import com.google.gson.Gson;
 
-public class BaseGosnEntity {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class BaseJsonEntity {
 
     public static Object getJson(Content.TYPE type, String json) {
         Object object = null;

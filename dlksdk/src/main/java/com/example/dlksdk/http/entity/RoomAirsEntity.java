@@ -1,5 +1,7 @@
 package com.example.dlksdk.http.entity;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /**
@@ -58,9 +60,20 @@ public class RoomAirsEntity extends BaseEntity{
              */
 
             private String fan;
+            @SerializedName("switch")
+            private String switchs;
             private String mode;
             private int setT;
             private int currentT;
+
+
+            public String getSwitchs() {
+                return switchs;
+            }
+
+            public void setSwitchs(String switchs) {
+                this.switchs = switchs;
+            }
 
             public String getFan() {
                 return fan;
