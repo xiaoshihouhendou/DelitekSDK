@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.alibaba.fastjson.JSON;
 import com.example.dlksdk.Content.Content;
 import com.example.dlksdk.http.entity.DevicesEntity;
 import com.example.dlksdk.until.BaseData;
@@ -35,6 +34,10 @@ public class BQSDK extends Request {
 
     private int ariTimeCount = 5;
     private int lightTimeCount = 3;
+
+    private Handler handler = new Handler();
+
+    private Runnable runnable;
 
 
     public BQSDK setAriTimeCount(int ariTimeCount) {
@@ -80,27 +83,31 @@ public class BQSDK extends Request {
             case CONTROL_LIGHT_CHANNEL:
             case CONTROL_ROOM_CHANNEL:
                 during = lightTimeCount;
+                stop();
                 break;
             case CONTROL_ROOM_AIRS:
                 during = ariTimeCount;
+                stop();
                 break;
         }
 
-        isControl = true;
-        if (Request.allData) {//如果正在自动请求
-            Request.allData = false;
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    handler.postDelayed(this, 1000);
-                    during--;
-                    if (during == 0) {
-                        isControl = false;
-                    }
-                }
-            }, 1000);
+
+        if (runnable != null) {
+            handler.removeCallbacks(runnable);
         }
+        isControl=true;
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                handler.postDelayed(this, 1000);
+                during--;
+                if (during == 0) {
+                    isControl = false;
+                    BuildAll();
+                }
+            }
+        };
+        handler.postDelayed(runnable, 1000);
         this.type = type;
         object = BaseData.getJson(type);
         return this;
@@ -124,8 +131,9 @@ public class BQSDK extends Request {
 
 
     public void stopAll() {
-        isControl = true;
-        Request.allData = false;
+        stop();
+//        isControl = true;
+//        Request.allData = false;
     }
 
     public void Build() {
@@ -196,8 +204,6 @@ public class BQSDK extends Request {
 //                "type":"air","room":"8888","areaId":1,"datas":[{"id":1,"fan":"high","mode":"cold","setT":24},{"id":2,"fan":"middle","mode":"fan","setT":26}]
                 JSONArray array2 = null;
                 try {
-                    Log.i("---->>>>-", "Build: " + JSON.toJSONString(list_devices));
-                    Log.i("---->>>>-", "Build: " + object.toString());
                     array2 = object.getJSONArray("datas");
                     for (int i = 0; i < list_devices.size(); i++) {
                         if (object.optInt("areaId") == (list_devices.get(i).getAreaId()) &&
@@ -224,8 +230,6 @@ public class BQSDK extends Request {
 //                "room":"8888","areaId":1,"datas":[{"id":1,"value":"open"},{"id":2,"value":"stop"}]
                 JSONArray array3 = null;
                 try {
-                    Log.i("---->>>>-", "Build: " + JSON.toJSONString(list_devices));
-                    Log.i("---->>>>-", "Build: " + object.toString());
                     array3 = object.getJSONArray("datas");
                     for (int i = 0; i < list_devices.size(); i++) {
                         if (object.optInt("areaId") == (list_devices.get(i).getAreaId()) &&
@@ -261,7 +265,6 @@ public class BQSDK extends Request {
                 during = ariTimeCount;
                 break;
         }
-//        Request request=new Re
         request(object.toString(), type);
     }
 

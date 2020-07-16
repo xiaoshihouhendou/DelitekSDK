@@ -26,5 +26,5 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.1.67.android'
 
     implementation project(path: ':dlksdk')
-
+//    implementation 'com.github.xiaoshihouhendou:DelitekSDK:1.0.1'
 }

@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson.JSON;
 import com.example.dlksdk.App;
-import com.example.dlksdk.BQSDK;
 import com.example.dlksdk.Content.Content;
 import com.example.dlksdk.http.HttpUtils;
 import com.example.dlksdk.http.callback.CommonCallback;
@@ -61,6 +60,8 @@ public abstract class Request {
     public Map objectRoom;
     public Map objectLight;
 
+    private boolean isAll = false;
+
     private Handler handler = new Handler() {
 
 
@@ -70,24 +71,31 @@ public abstract class Request {
             if (!isControl) {
                 all();
             }
-
-
         }
     };
+    private Runnable runnable;
+
 
     public void request(int times) {
         this.time = times;
         handler.sendEmptyMessage(0);
-        handler.postDelayed(new Runnable() {
+        runnable = new Runnable() {
             @Override
             public void run() {
                 handler.postDelayed(this, time);
                 handler.sendEmptyMessage(0);
             }
-        }, time);
+        };
+        handler.postDelayed(runnable, time);
 
     }
 
+    public void stop() {
+        if (handler != null) {
+            isAll=false;
+            handler.removeCallbacks(runnable);
+        }
+    }
 
     private void all() {
         isLightBack = false;
@@ -121,7 +129,7 @@ public abstract class Request {
                         }
                     }
                 }
-                if (isRoomBack) {
+                if (isRoomBack & !isControl) {
                     allData = true;
                     if (list_devices.size() == 0) {
                         list_devices.addAll(list_devices_light);
@@ -141,9 +149,6 @@ public abstract class Request {
                                         !list_devices_light.get(j).getState().getValue().equals(list_devices.get(i).getState().getValue())
                                 ) {
                                     list_devices_changes.add(list_devices_light.get(j));
-                                    Log.i("----", "success: //////////-----------------------------------room");
-                                    Log.i("----", "success: //////////---" + JSON.toJSONString(list_devices_light.get(j)));
-                                    Log.i("----", "success: //////////---" + JSON.toJSONString(list_devices.get(i)));
                                 }
                             }
                             for (int j = 0; j < list_devices_room.size(); j++) {
@@ -168,8 +173,9 @@ public abstract class Request {
                         list_devices.addAll(list_devices_room);
                         list_devices_room.clear();
                         list_devices_light.clear();
-                        Log.i(">>>>", "result: 实际数据list_devices_changes=" + list_devices_changes.size());
-                        if (list_devices_changes.size() > 0) {
+
+                        if (list_devices_changes.size() > 0 & isControl) {
+                            Log.i(">>>>", "result: 实际数据list_devices_changes=" + list_devices_changes.size() + "时间" + System.currentTimeMillis());
                             result(list_devices_changes);
                         }
                     }
@@ -178,7 +184,6 @@ public abstract class Request {
 
             @Override
             protected void failure(String reason) {
-
                 reason(reason);
             }
         });
@@ -214,7 +219,7 @@ public abstract class Request {
                         }
                     }
                 }
-                if (isLightBack) {
+                if (isLightBack & !isControl) {
                     allData = true;
                     if (list_devices.size() == 0) {
                         list_devices.addAll(list_devices_light);
@@ -232,16 +237,13 @@ public abstract class Request {
                                         list_devices_light.get(j).getType().equals(list_devices.get(i).getType()) &&
                                         !list_devices_light.get(j).getState().getValue().equals(list_devices.get(i).getState().getValue())
                                 ) {
-                                    Log.i("----", "success: //////////-----------------------------------room");
-                                    Log.i("----", "success: //////////---" + JSON.toJSONString(list_devices_light.get(j)));
-                                    Log.i("----", "success: //////////---" + JSON.toJSONString(list_devices.get(i)));
                                     list_devices_changes.add(list_devices_light.get(j));
                                 }
                             }
                             for (int j = 0; j < list_devices_room.size(); j++) {
                                 if (list_devices_room.get(j).getAreaId() == list_devices.get(i).getAreaId() &&
                                         list_devices_room.get(j).getId() == list_devices.get(i).getId() &&
-                                        list_devices_room.get(j).getType().equals(list_devices.get(i).getType())&&
+                                        list_devices_room.get(j).getType().equals(list_devices.get(i).getType()) &&
                                         list_devices_room.get(j).getRoom().equals(list_devices.get(i).getRoom())
                                 ) {
                                     if (!list_devices_room.get(j).getState().getValue().equals(list_devices.get(i).getState().getValue()) ||
@@ -275,11 +277,9 @@ public abstract class Request {
     }
 
     public void request(String body, Content.TYPE type) {
-        Log.i(">>>>", "request: >>>>" + body);
         HttpUtils.doPost(Content.getUrl(type), body, new CommonCallback<String>() {
             @Override
             protected void success(String result) {
-                Log.i("---->>>>", "success: " + result);
                 result(result);
 
             }
@@ -296,9 +296,12 @@ public abstract class Request {
      * 接口通了  在优化
      */
     public void requestAll(Map<String, Object> room, Map<String, Object> light) {
-        this.objectLight = light;
-        this.objectRoom = room;
-        request(App.pass);
+        if (!isAll) {
+            isAll = true;
+            this.objectLight = light;
+            this.objectRoom = room;
+            request(App.pass);
+        }
     }
 
     protected abstract void result(String result);

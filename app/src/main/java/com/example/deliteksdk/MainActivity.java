@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.alibaba.fastjson.JSON;
 import com.example.dlksdk.BQSDK;
 import com.example.dlksdk.Content.Content;
-import com.example.dlksdk.http.entity.AllDevicesEntity;
 import com.example.dlksdk.http.entity.DevicesEntity;
 import com.example.dlksdk.http.entity.LightAreaEntity;
 import com.example.dlksdk.http.entity.LightChannelEntity;
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BQSDK.Init("192.168.1.102");
+        BQSDK.Init("192.168.175.188");
         tv1 = findViewById(R.id.tv_1);
         tv2 = findViewById(R.id.tv_2);
         tv3 = findViewById(R.id.tv_3);
@@ -108,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
                 tvContent.setText("ip设置完成");
             }
         });
-
     }
 
 
@@ -152,11 +150,7 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
 
     }
 
-//    @Override
-//    public void result(List<DevicesEntity> entity) {
-//        tvContent.setText("灯控设备数量:》》" + entity.getLight().getDatas().size() + "\n客控设备数量:>>>>"
-//                + entity.getRoom().getDatas().size() + "时间>>" + System.currentTimeMillis());
-//    }
+
 
     @Override
     public void resultDevices(List<DevicesEntity> entity) {
@@ -171,8 +165,6 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
         } else {
             tvContent.setText("操作失败>>" + season);
         }
-
-
     }
 
     @Override
@@ -207,9 +199,9 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
             case R.id.tv_3:
 //                "room":"8888","areaId":1,"presetId":1
                 BQSDK.Init().Control(Content.TYPE.CONTROL_ROOM_PRESET)
-                        .addParams("room","8888")
-                        .addParams("areaId",1)
-                        .addParams("presetId",1)
+                        .addParams("room", "8888")
+                        .addParams("areaId", 1)
+                        .addParams("presetId", 1)
                         .Build();
                 break;
             case R.id.tv_4:
@@ -295,7 +287,6 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
                 mapRoom.put("areaIds", array8);
                 mapRoom.put("room", "8888");
                 mapLight.put("areaIds", array8);
-
 
 
                 BQSDK.Init().SearchAllDevices(mapRoom, mapLight)
