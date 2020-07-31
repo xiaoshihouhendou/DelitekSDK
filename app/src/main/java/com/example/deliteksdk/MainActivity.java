@@ -2,6 +2,7 @@ package com.example.deliteksdk;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -112,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements BQSDK.DataBackLis
 
     @Override
     public void result(Content.TYPE type, Object o) {
-
         switch (type) {
             case SEARCH_LIGHT_AREA:
                 tvContent.setText("搜索成功》》》》》数据长度" + JSON.toJSONString((LightAreaEntity) o));

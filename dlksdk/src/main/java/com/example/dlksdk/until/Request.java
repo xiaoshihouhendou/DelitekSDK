@@ -277,9 +277,13 @@ public abstract class Request {
     }
 
     public void request(String body, Content.TYPE type) {
+        Log.i("------", "request: "+body);
+        Log.i("------", "request: "+type.name());
+        Log.i("------", "request: "+Content.getUrl(type));
         HttpUtils.doPost(Content.getUrl(type), body, new CommonCallback<String>() {
             @Override
             protected void success(String result) {
+                Log.i("------", "success: "+result);
                 result(result);
 
             }

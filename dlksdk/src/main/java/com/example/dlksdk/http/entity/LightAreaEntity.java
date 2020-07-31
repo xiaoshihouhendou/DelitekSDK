@@ -15,20 +15,20 @@ public class LightAreaEntity extends BaseEntity {
      * type : area
      */
 
-    private List<AreasBean> areas;
+    private List<DatasBean> datas;
 
-    public List<AreasBean> getAreas() {
-        if (areas==null){
-            areas=new ArrayList<>();
+    public List<DatasBean> getAreas() {
+        if (datas==null){
+            datas=new ArrayList<>();
         }
-        return areas;
+        return datas;
     }
 
-    public void setAreas(List<AreasBean> areas) {
-        this.areas = areas;
+    public void setAreas(List<DatasBean> areas) {
+        this.datas = areas;
     }
 
-    public static class AreasBean {
+    public static class DatasBean {
         /**
          * id : 1
          * name : 一层
